@@ -1,42 +1,41 @@
-- name: ConfigWebserver 
+- name: Configure Webserver using Docker
   hosts: webserver  
-  
   tasks:
-  - name: Add-Docker-repo
+  - name: Adding Docker repository
     yum_repository:
       name: Docker
-      description: Docker-repo
+      description: Docker Repo
       baseurl: https://download.docker.com/linux/centos/7/x86_64/stable
       gpgcheck: no
       
-  - name: Install-Docker-package
+  - name: Install Docker package
     package:
-      name: 
-      - "docker-ce-18.06.3.ce-3.el7.x86_64"
-      state: present
+    name: 
+    - "docker-ce-18.06.3.ce-3.el7.x86_64"
+    state: present
       
-   - name: Start-docker-service 
-    service:
+   - name: Start docker service 
+     service:
       name: "docker"
       state: started
       enabled: yes
-      
-   - name: Installing-Docker-SDK-for-python3
-    command: pip3 install docker
     
-   - name: Creating-folder-and-copying-html-file...
-    file:
+   - name: Installing Docker SDK for python3
+     command: pip3 install docker
+    
+   - name: Create folder and copy html file...
+     file:
       path: /htmlcode
       state: directory
-      
-   - name: Copying-html-files
-    copy:
+    
+   - name: Copy html files
+     copy:
       src: "/root/aay.html"
       dest: "/htmlcode/"
       
-   - name: Create-container-using-httpd-image
-    docker_container:
-      name: aayServer
+   - name: Create container using HTTPD Image 
+     docker_container:
+      name: aayWebServer
       image: httpd
       state: started
       exposed_ports:
@@ -44,4 +43,4 @@
       ports:
       - "8888:80"
       volumes:
-      - /htmlcode:/usr/local/apache2/htdocs/
+      - /webpages:/usr/local/apache2/htdocs/
